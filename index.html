@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI로 AI스럽지 않은 이미지 만들기</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700&display=swap');
+
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --bg-primary: #1a1e2e;
+    --bg-secondary: #232838;
+    --bg-card: #2a2f42;
+    --bg-code: #1e2235;
+    --teal: #4ecdc4;
+    --teal-dim: rgba(78, 205, 196, 0.15);
+    --coral: #ff6b6b;
+    --coral-dim: rgba(255, 107, 107, 0.15);
+    --text-primary: #e8eaf0;
+    --text-secondary: #a0a8c0;
+    --text-muted: #6b7394;
+    --border: #353b52;
+    --radius: 12px;
+    --radius-sm: 8px;
+  }
+
+  html { scroll-behavior: smooth; scroll-padding-top: 70px; }
+
+  body {
+    font-family: 'Noto Sans KR', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    line-height: 1.7;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* NAV */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    background: rgba(26, 30, 46, 0.92);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+  }
+  .nav-inner {
+    max-width: 800px; margin: 0 auto;
+    display: flex; align-items: center; gap: 4px;
+    padding: 0 16px; height: 56px;
+    overflow-x: auto; -webkit-overflow-scrolling: touch;
+  }
+  .nav-inner::-webkit-scrollbar { display: none; }
+  .nav-link {
+    flex-shrink: 0;
+    padding: 6px 14px; border-radius: 20px;
+    font-size: 13px; font-weight: 500;
+    color: var(--text-secondary);
+    text-decoration: none;
+    transition: all 0.2s;
+    white-space: nowrap;
+  }
+  .nav-link:hover, .nav-link:active {
+    color: var(--teal); background: var(--teal-dim);
+  }
+
+  /* MAIN */
+  main { max-width: 800px; margin: 0 auto; padding: 76px 20px 60px; }
+
+  /* HEADER */
+  .hero {
+    text-align: center; padding: 48px 0 40px;
+  }
+  .hero h1 {
+    font-size: clamp(1.6rem, 5vw, 2.4rem);
+    font-weight: 700; line-height: 1.35;
+    margin-bottom: 12px;
+  }
+  .hero h1 .highlight { color: var(--teal); }
+  .hero p {
+    font-size: clamp(0.95rem, 2.5vw, 1.1rem);
+    color: var(--text-secondary); font-weight: 300;
+  }
+  .hero-date {
+    display: inline-block; margin-top: 16px;
+    padding: 6px 16px; border-radius: 20px;
+    background: var(--teal-dim); color: var(--teal);
+    font-size: 13px; font-weight: 500;
+  }
+
+  /* SECTION */
+  section { margin-bottom: 56px; }
+  .section-title {
+    font-size: 1.3rem; font-weight: 700;
+    margin-bottom: 20px; padding-bottom: 10px;
+    border-bottom: 2px solid var(--teal);
+    display: flex; align-items: center; gap: 10px;
+  }
+  .section-number {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 30px; height: 30px; border-radius: 50%;
+    background: var(--teal); color: var(--bg-primary);
+    font-size: 14px; font-weight: 700; flex-shrink: 0;
+  }
+
+  /* CARDS */
+  .card {
+    background: var(--bg-card); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 20px;
+    margin-bottom: 12px; transition: border-color 0.2s;
+  }
+  .card:hover { border-color: var(--teal); }
+  .card-title {
+    font-size: 1.05rem; font-weight: 600; margin-bottom: 6px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .card-title a {
+    color: var(--teal); text-decoration: none;
+  }
+  .card-title a:hover { text-decoration: underline; }
+  .card-desc { color: var(--text-secondary); font-size: 0.9rem; }
+
+  /* PROMPT BLOCK */
+  .prompt-block {
+    position: relative;
+    background: var(--bg-code);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px 20px 20px 20px;
+    margin-bottom: 12px;
+    font-size: 0.88rem; line-height: 1.8;
+    white-space: pre-wrap; word-break: break-word;
+    color: var(--text-primary);
+  }
+  .copy-btn {
+    position: absolute; top: 10px; right: 10px;
+    background: var(--teal); color: var(--bg-primary);
+    border: none; border-radius: var(--radius-sm);
+    padding: 6px 14px; font-size: 12px; font-weight: 600;
+    cursor: pointer; transition: all 0.2s;
+    font-family: inherit;
+  }
+  .copy-btn:hover { opacity: 0.85; transform: scale(1.03); }
+  .copy-btn.copied { background: var(--coral); color: #fff; }
+
+  /* PRINCIPLES */
+  .principle {
+    display: flex; gap: 14px; align-items: flex-start;
+    background: var(--bg-card); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 18px;
+    margin-bottom: 10px;
+  }
+  .principle-num {
+    flex-shrink: 0; width: 32px; height: 32px;
+    display: flex; align-items: center; justify-content: center;
+    border-radius: 50%; font-weight: 700; font-size: 14px;
+    background: var(--coral-dim); color: var(--coral);
+  }
+  .principle-title { font-weight: 600; margin-bottom: 2px; }
+  .principle-detail { color: var(--text-secondary); font-size: 0.88rem; }
+
+  /* RECIPE */
+  .recipe {
+    position: relative;
+    background: var(--bg-card); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 16px 70px 16px 16px;
+    margin-bottom: 10px; font-size: 0.92rem;
+  }
+  .recipe .copy-btn { top: 50%; transform: translateY(-50%); }
+  .recipe .copy-btn:hover { transform: translateY(-50%) scale(1.03); }
+  .recipe .copy-btn.copied { transform: translateY(-50%); }
+  .recipe-num {
+    display: inline-block; color: var(--teal);
+    font-weight: 700; margin-right: 6px;
+  }
+  .recipe code {
+    color: var(--coral); background: var(--coral-dim);
+    padding: 1px 5px; border-radius: 4px; font-size: 0.85rem;
+  }
+
+  /* MISSION */
+  .mission-box {
+    background: var(--bg-card); border-left: 4px solid var(--coral);
+    border-radius: 0 var(--radius) var(--radius) 0;
+    padding: 20px; margin-bottom: 16px;
+  }
+  .mission-box p { margin-bottom: 8px; font-size: 0.92rem; line-height: 1.8; }
+  .mission-label {
+    display: inline-block; padding: 3px 10px; border-radius: 4px;
+    font-size: 12px; font-weight: 600; margin-bottom: 10px;
+  }
+  .label-article { background: var(--teal-dim); color: var(--teal); }
+  .label-rule { background: var(--coral-dim); color: var(--coral); }
+  .rule-list { list-style: none; padding: 0; }
+  .rule-list li {
+    padding: 6px 0; font-size: 0.9rem;
+    display: flex; align-items: flex-start; gap: 8px;
+  }
+  .rule-list li::before {
+    content: ''; flex-shrink: 0;
+    width: 6px; height: 6px; border-radius: 50%;
+    background: var(--coral); margin-top: 9px;
+  }
+
+  /* SHARE */
+  .padlet-btn {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: var(--coral); color: #fff;
+    padding: 14px 28px; border-radius: var(--radius);
+    text-decoration: none; font-weight: 600; font-size: 1rem;
+    transition: all 0.2s;
+  }
+  .padlet-btn:hover { opacity: 0.9; transform: translateY(-1px); }
+  .padlet-btn svg { width: 20px; height: 20px; }
+
+  /* TOOL / VIDEO LIST */
+  .tool-item {
+    display: flex; align-items: center; gap: 12px;
+    padding: 14px 0; border-bottom: 1px solid var(--border);
+  }
+  .tool-item:last-child { border-bottom: none; }
+  .tool-icon {
+    width: 40px; height: 40px; border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px; flex-shrink: 0;
+  }
+  .tool-icon.teal-bg { background: var(--teal-dim); }
+  .tool-icon.coral-bg { background: var(--coral-dim); }
+  .tool-name a {
+    color: var(--teal); text-decoration: none; font-weight: 600;
+    font-size: 0.95rem;
+  }
+  .tool-name a:hover { text-decoration: underline; }
+  .tool-detail { color: var(--text-secondary); font-size: 0.82rem; margin-top: 2px; }
+
+  .video-item {
+    display: flex; align-items: center; gap: 12px;
+    padding: 12px 0; border-bottom: 1px solid var(--border);
+  }
+  .video-item:last-child { border-bottom: none; }
+  .video-icon {
+    width: 36px; height: 36px; border-radius: 8px;
+    background: var(--coral-dim); color: var(--coral);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px; flex-shrink: 0;
+  }
+  .video-item a {
+    color: var(--text-primary); text-decoration: none;
+    font-size: 0.9rem; font-weight: 400;
+  }
+  .video-item a:hover { color: var(--teal); }
+
+  /* FOOTER */
+  footer {
+    text-align: center; padding: 40px 20px;
+    color: var(--text-muted); font-size: 0.8rem;
+    border-top: 1px solid var(--border);
+  }
+
+  /* TOAST */
+  .toast {
+    position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(80px);
+    background: var(--teal); color: var(--bg-primary);
+    padding: 10px 24px; border-radius: 30px;
+    font-size: 14px; font-weight: 600;
+    opacity: 0; transition: all 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+    pointer-events: none; z-index: 200;
+  }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+  /* RESPONSIVE */
+  @media (max-width: 600px) {
+    main { padding: 66px 14px 40px; }
+    .hero { padding: 32px 0 28px; }
+    .prompt-block { padding: 16px 14px; font-size: 0.82rem; }
+    .copy-btn { padding: 5px 10px; font-size: 11px; }
+    .recipe { padding: 14px 62px 14px 14px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAVIGATION -->
+<nav>
+  <div class="nav-inner">
+    <a href="#tools" class="nav-link">실습 도구</a>
+    <a href="#prompt-team" class="nav-link">프롬프트 팀</a>
+    <a href="#principles" class="nav-link">4대 원칙</a>
+    <a href="#recipes" class="nav-link">레시피</a>
+    <a href="#mission" class="nav-link">실습 미션</a>
+    <a href="#share" class="nav-link">결과 공유</a>
+    <a href="#resources" class="nav-link">추천 도구</a>
+  </div>
+</nav>
+
+<main>
+
+<!-- HERO -->
+<div class="hero">
+  <h1>AI로 <span class="highlight">AI스럽지 않은</span><br>이미지 만들기</h1>
+  <p>기자를 위한 AI 이미지 생성 실전 가이드</p>
+  <div class="hero-date">2026. 4. 23. 워크숍</div>
+</div>
+
+<!-- SECTION 1: 실습 도구 -->
+<section id="tools">
+  <h2 class="section-title"><span class="section-number">1</span>실습 도구</h2>
+
+  <div class="card">
+    <div class="card-title">
+      <span>&#x1f4ac;</span>
+      <a href="https://chatgpt.com" target="_blank" rel="noopener">ChatGPT</a>
+    </div>
+    <div class="card-desc">이미지 생성 토글을 켜고 프롬프트 입력</div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">
+      <span>&#x2728;</span>
+      <a href="https://gemini.google.com" target="_blank" rel="noopener">Gemini</a>
+    </div>
+    <div class="card-desc">구글 계정으로 바로 사용</div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">
+      <span>&#x1f4d3;</span>
+      <a href="https://notebooklm.google.com" target="_blank" rel="noopener">NotebookLM</a>
+    </div>
+    <div class="card-desc">문서 업로드 &rarr; 요약 &middot; 이미지 &middot; 오디오</div>
+  </div>
+</section>
+
+<!-- SECTION 2: 프롬프트 팀 -->
+<section id="prompt-team">
+  <h2 class="section-title"><span class="section-number">2</span>프롬프트 팀 워크플로우</h2>
+  <p style="color:var(--text-secondary); margin-bottom:16px; font-size:0.92rem;">
+    4명의 전문가가 순서대로 협업하여 최적의 인포그래픽 프롬프트를 만들어줍니다.<br>
+    아래 프롬프트를 복사해 ChatGPT/Gemini에 붙여넣고, 주제만 입력하세요.
+  </p>
+  <div class="prompt-block" id="team-prompt">
+    <button class="copy-btn" onclick="copyBlock('team-prompt')">복사</button>
+당신은 교육용 인포그래픽 프롬프트 팀입니다.
+
+사용자가 주제를 제시하면, 아래 4명이 순서대로 작업합니다:
+
+&#x1f4da; Sam (교육 콘텐츠 전문가): 학습 목표, 핵심 개념, 정보 구조 설계
+&#x1f3a8; Jenny (비주얼 디자인 전문가): 색상 팔레트, 레이아웃, 일러스트 스타일, 시각적 계층
+&#x26a1; Will (AI 프롬프트 엔지니어): Sam+Jenny의 명세를 통합하여 최적화된 영어 프롬프트 작성 (150~250단어)
+&#x1f451; Team Leader (품질 관리자): 교육적 정확성&middot;시각적 완성도&middot;프롬프트 효율성 최종 검토
+
+최종 프롬프트를 코드 블록으로 출력해주세요.</div>
+</section>
+
+<!-- SECTION 3: 4대 원칙 -->
+<section id="principles">
+  <h2 class="section-title"><span class="section-number">3</span>프롬프트 4대 원칙</h2>
+
+  <div class="principle">
+    <div class="principle-num">1</div>
+    <div>
+      <div class="principle-title">카메라 용어 사용</div>
+      <div class="principle-detail">35mm, 자연광, 필름 그레인, 얕은 피사계 심도</div>
+    </div>
+  </div>
+
+  <div class="principle">
+    <div class="principle-num">2</div>
+    <div>
+      <div class="principle-title">불완전함 넣기</div>
+      <div class="principle-detail">노이즈, 블러, 비대칭 구도</div>
+    </div>
+  </div>
+
+  <div class="principle">
+    <div class="principle-num">3</div>
+    <div>
+      <div class="principle-title">구체적 맥락</div>
+      <div class="principle-detail">"서울 동네 약국 오후 3시" vs "약국"</div>
+    </div>
+  </div>
+
+  <div class="principle">
+    <div class="principle-num">4</div>
+    <div>
+      <div class="principle-title">과장 형용사 금지</div>
+      <div class="principle-detail">beautiful, perfect, stunning 삭제</div>
+    </div>
+  </div>
+</section>
+
+<!-- SECTION 4: 레시피 -->
+<section id="recipes">
+  <h2 class="section-title"><span class="section-number">4</span>프롬프트 레시피</h2>
+
+  <div class="recipe" id="recipe1">
+    <button class="copy-btn" onclick="copyBlock('recipe1')">복사</button>
+    <span class="recipe-num">#1</span>
+    <code>{내용}</code>을 담은 실제 손글씨 오래된 노트 종이 사진을 만들어줘
+  </div>
+
+  <div class="recipe" id="recipe2">
+    <button class="copy-btn" onclick="copyBlock('recipe2')">복사</button>
+    <span class="recipe-num">#2</span>
+    <code>{주제}</code>를 찍은 35mm 필름 사진, 자연광, 얕은 피사계 심도
+  </div>
+
+  <div class="recipe" id="recipe3">
+    <button class="copy-btn" onclick="copyBlock('recipe3')">복사</button>
+    <span class="recipe-num">#3</span>
+    <code>{장면}</code>의 클로즈업, 손만 보이고, 약간의 필름 그레인
+  </div>
+
+  <div class="recipe" id="recipe4">
+    <button class="copy-btn" onclick="copyBlock('recipe4')">복사</button>
+    <span class="recipe-num">#4</span>
+    <code>{공간}</code>을 위에서 내려다본 플랫레이 사진, 따뜻한 톤
+  </div>
+</section>
+
+<!-- SECTION 5: 실습 미션 -->
+<section id="mission">
+  <h2 class="section-title"><span class="section-number">5</span>실습 미션</h2>
+
+  <div class="mission-box">
+    <span class="mission-label label-article">기사 리드</span>
+    <p>"건강보험심사평가원이 당뇨병용제 급여기준을 확대하는 고시를 발표했다. 이번 개정으로 GLP-1 수용체작용제의 처방 범위가 넓어지며, 건강보험 재정 영향이 가장 클 것으로 전망된다."</p>
+  </div>
+
+  <div class="mission-box">
+    <span class="mission-label label-rule">실습 조건</span>
+    <ul class="rule-list">
+      <li>일러스트/만화 &#x274c; &rarr; 사진 느낌</li>
+      <li>얼굴 정면 &#x274c; &rarr; 뒷모습, 손, 실루엣</li>
+      <li>카메라 용어 1개 이상</li>
+      <li>beautiful / perfect 금지</li>
+      <li>시간: <strong>15분</strong></li>
+    </ul>
+  </div>
+</section>
+
+<!-- SECTION 6: 결과 공유 -->
+<section id="share">
+  <h2 class="section-title"><span class="section-number">6</span>결과 공유</h2>
+  <p style="color:var(--text-secondary); margin-bottom:20px; font-size:0.92rem;">
+    완성된 이미지를 아래 Padlet에 올려주세요!
+  </p>
+  <a href="https://padlet.com/sjhann96/padlet-cls337hswbz5wxtl" target="_blank" rel="noopener" class="padlet-btn">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+    Padlet에서 공유하기
+  </a>
+</section>
+
+<!-- SECTION 7: 추천 도구 & 참고 영상 -->
+<section id="resources">
+  <h2 class="section-title"><span class="section-number">7</span>추천 도구 &amp; 참고 영상</h2>
+
+  <h3 style="font-size:1rem; font-weight:600; margin-bottom:8px; color:var(--teal);">추천 도구</h3>
+  <div style="margin-bottom:28px;">
+    <div class="tool-item">
+      <div class="tool-icon teal-bg">&#x1f399;</div>
+      <div>
+        <div class="tool-name"><a href="https://daglo.ai" target="_blank" rel="noopener">daglo</a></div>
+        <div class="tool-detail">AI 속기 &middot; 요약</div>
+      </div>
+    </div>
+    <div class="tool-item">
+      <div class="tool-icon teal-bg">&#x1f4dd;</div>
+      <div>
+        <div class="tool-name"><a href="https://altalt.io" target="_blank" rel="noopener">Alt</a></div>
+        <div class="tool-detail">무료 AI 노트</div>
+      </div>
+    </div>
+  </div>
+
+  <h3 style="font-size:1rem; font-weight:600; margin-bottom:8px; color:var(--coral);">참고 영상</h3>
+  <div>
+    <div class="video-item">
+      <div class="video-icon">&#x25b6;</div>
+      <a href="https://youtu.be/sY3rUG2O1O4" target="_blank" rel="noopener">NotebookLM 이미지</a>
+    </div>
+    <div class="video-item">
+      <div class="video-icon">&#x25b6;</div>
+      <a href="https://www.youtube.com/watch?v=Nncuwyo_IB4" target="_blank" rel="noopener">GPT 이미지 2.0 + 릭스필드AI</a>
+    </div>
+    <div class="video-item">
+      <div class="video-icon">&#x25b6;</div>
+      <a href="https://www.youtube.com/watch?v=Ppw3p5gLVUk" target="_blank" rel="noopener">ChatGPT 이미지 10가지</a>
+    </div>
+    <div class="video-item">
+      <div class="video-icon">&#x25b6;</div>
+      <a href="https://www.youtube.com/watch?v=XcYNNM-vXEg" target="_blank" rel="noopener">인포그래픽 프롬프트팀</a>
+    </div>
+    <div class="video-item">
+      <div class="video-icon">&#x25b6;</div>
+      <a href="https://www.youtube.com/watch?v=rdf3Aft--JQ" target="_blank" rel="noopener">나노바나나 Pro</a>
+    </div>
+    <div class="video-item">
+      <div class="video-icon">&#x25b6;</div>
+      <a href="https://www.youtube.com/watch?v=N2HVpnh1uiY" target="_blank" rel="noopener">AI 쇼츠영상</a>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  AI Image Workshop &middot; 2026
+</footer>
+
+<!-- TOAST -->
+<div class="toast" id="toast">복사 완료!</div>
+
+<script>
+function getTextContent(el) {
+  // For prompt-block: get the text excluding the button
+  const clone = el.cloneNode(true);
+  const btns = clone.querySelectorAll('.copy-btn');
+  btns.forEach(b => b.remove());
+  // Also remove recipe-num and code tags, keep their text
+  return clone.textContent.trim();
+}
+
+function copyBlock(id) {
+  const el = document.getElementById(id);
+  const text = getTextContent(el);
+  const btn = el.querySelector('.copy-btn');
+
+  navigator.clipboard.writeText(text).then(() => {
+    btn.textContent = '완료!';
+    btn.classList.add('copied');
+    showToast();
+    setTimeout(() => {
+      btn.textContent = '복사';
+      btn.classList.remove('copied');
+    }, 1800);
+  }).catch(() => {
+    // Fallback
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    ta.style.position = 'fixed';
+    ta.style.opacity = '0';
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand('copy');
+    document.body.removeChild(ta);
+    btn.textContent = '완료!';
+    btn.classList.add('copied');
+    showToast();
+    setTimeout(() => {
+      btn.textContent = '복사';
+      btn.classList.remove('copied');
+    }, 1800);
+  });
+}
+
+function showToast() {
+  const t = document.getElementById('toast');
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 1600);
+}
+
+// Active nav highlight on scroll
+const sections = document.querySelectorAll('section[id]');
+const navLinks = document.querySelectorAll('.nav-link');
+
+function highlightNav() {
+  let current = '';
+  sections.forEach(s => {
+    const top = s.offsetTop - 80;
+    if (window.scrollY >= top) current = s.getAttribute('id');
+  });
+  navLinks.forEach(link => {
+    link.style.color = '';
+    link.style.background = '';
+    if (link.getAttribute('href') === '#' + current) {
+      link.style.color = 'var(--teal)';
+      link.style.background = 'var(--teal-dim)';
+    }
+  });
+}
+window.addEventListener('scroll', highlightNav, { passive: true });
+highlightNav();
+</script>
+
+</body>
+</html>

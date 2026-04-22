@@ -343,18 +343,21 @@
     <div style="font-size:2rem; margin-bottom:8px;">&#x1f680;</div>
     <div style="font-size:1.1rem; font-weight:700; margin-bottom:4px;">먼저 체험! NotebookLM</div>
     <p style="color:var(--text-secondary); font-size:0.88rem; margin-bottom:14px;">
-      <a href="https://notebooklm.google.com" target="_blank" rel="noopener" style="color:var(--teal); text-decoration:underline;">notebooklm.google.com</a> 접속 &rarr; PDF 업로드 &rarr; 아래 프롬프트 입력
+      <a href="https://notebooklm.google.com" target="_blank" rel="noopener" style="color:var(--teal); text-decoration:underline;">notebooklm.google.com</a> 접속 &rarr; 아래 2개 소스 업로드 &rarr; 프롬프트 입력
     </p>
-    <a href="diabetes_policy.pdf" download style="display:inline-flex; align-items:center; gap:8px; background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius-sm); padding:10px 18px; margin-bottom:14px; text-decoration:none; color:var(--text-primary); font-size:0.9rem; font-weight:500; transition:border-color 0.2s;">
-      <span style="font-size:1.2rem;">&#x1f4c4;</span>
-      당뇨병용제 급여기준 고시 PDF 다운로드
-      <span style="color:var(--teal); font-size:0.8rem;">&#x2913;</span>
-    </a>
+    <div style="display:flex; flex-wrap:wrap; gap:8px; margin-bottom:14px;">
+      <a href="diabetes_policy.pdf" download style="display:inline-flex; align-items:center; gap:8px; background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius-sm); padding:10px 16px; text-decoration:none; color:var(--text-primary); font-size:0.85rem; font-weight:500; transition:border-color 0.2s;">
+        <span>&#x1f4c4;</span> 소스1: 당뇨병용제 급여기준 고시 <span style="color:var(--teal);">&#x2913;</span>
+      </a>
+      <a href="diabetes_articles.pdf" download style="display:inline-flex; align-items:center; gap:8px; background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius-sm); padding:10px 16px; text-decoration:none; color:var(--text-primary); font-size:0.85rem; font-weight:500; transition:border-color 0.2s;">
+        <span>&#x1f4f0;</span> 소스2: 급여기준 확대 기사 2건 <span style="color:var(--teal);">&#x2913;</span>
+      </a>
+    </div>
     <p style="display:none;"
     </p>
     <div class="prompt-block" id="wow-prompt" style="text-align:left; margin-bottom:0;">
       <button class="copy-btn" onclick="copyBlock('wow-prompt')">복사</button>
-이 문서를 쉽게 이해할 수 있는 이미지로 만들어줘.</div>
+두 자료를 바탕으로 "당뇨병용제 급여기준 확대가 필요하고, GLP-1 RA 환자가 가장 혜택을 많이 받는다"는 주장의 슬라이드 덱을 만들어줘. 슬라이드마다 이해를 돕는 이미지도 넣어줘.</div>
   </div>
 </section>
 

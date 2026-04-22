@@ -291,6 +291,25 @@
     border-top: none; margin-bottom: 0;
   }
 
+  /* RECIPE IMAGE DROPDOWN */
+  .recipe-img-toggle {
+    display: inline-flex; align-items: center; gap:6px;
+    background: none; border: none; color: var(--text-muted);
+    font-size: 0.8rem; cursor: pointer; padding: 6px 0 0;
+    font-family: inherit; transition: color 0.2s;
+  }
+  .recipe-img-toggle:hover { color: var(--teal); }
+  .recipe-img-toggle .arrow { transition: transform 0.3s; font-size: 10px; }
+  .recipe-img-toggle.active .arrow { transform: rotate(180deg); }
+  .recipe-img-toggle.active { color: var(--teal); }
+  .recipe-img-wrap {
+    max-height: 0; overflow: hidden; transition: max-height 0.4s ease;
+  }
+  .recipe-img-wrap img {
+    width: 100%; border-radius: var(--radius-sm);
+    margin-top: 10px; display: block;
+  }
+
   /* ROLE BLOCK */
   .role-header {
     color: var(--teal); font-weight: 700; font-size: 0.92rem;
@@ -478,28 +497,36 @@
 <section id="recipes">
   <h2 class="section-title"><span class="section-number">4</span>프롬프트 레시피</h2>
 
-  <div class="recipe" id="recipe1">
+  <div class="recipe" id="recipe1" style="padding-bottom:8px;">
     <button class="copy-btn" onclick="copyBlock('recipe1')">복사</button>
     <span class="recipe-num">#1</span>
     <code>바이오로드를 소개하는</code> 실제 손글씨 오래된 노트 종이 사진을 만들어줘
+    <br><button class="recipe-img-toggle" onclick="toggleRecipeImg(this)"><span class="arrow">&#x25bc;</span> 예시 보기</button>
+    <div class="recipe-img-wrap"><img src="images/recipe1.png" alt="손글씨 노트 예시" loading="lazy"></div>
   </div>
 
-  <div class="recipe" id="recipe2">
+  <div class="recipe" id="recipe2" style="padding-bottom:8px;">
     <button class="copy-btn" onclick="copyBlock('recipe2')">복사</button>
     <span class="recipe-num">#2</span>
     <code>약국 처방전 받는 장면</code>을 찍은 35mm 필름 사진, 자연광, 얕은 피사계 심도
+    <br><button class="recipe-img-toggle" onclick="toggleRecipeImg(this)"><span class="arrow">&#x25bc;</span> 예시 보기</button>
+    <div class="recipe-img-wrap"><img src="images/recipe2.png" alt="약국 처방전 예시" loading="lazy"></div>
   </div>
 
-  <div class="recipe" id="recipe3">
+  <div class="recipe" id="recipe3" style="padding-bottom:8px;">
     <button class="copy-btn" onclick="copyBlock('recipe3')">복사</button>
     <span class="recipe-num">#3</span>
     <code>약봉투를 여는 손</code>의 클로즈업, 손만 보이고, 약간의 필름 그레인
+    <br><button class="recipe-img-toggle" onclick="toggleRecipeImg(this)"><span class="arrow">&#x25bc;</span> 예시 보기</button>
+    <div class="recipe-img-wrap"><img src="images/recipe3.png" alt="약봉투 클로즈업 예시" loading="lazy"></div>
   </div>
 
-  <div class="recipe" id="recipe4">
+  <div class="recipe" id="recipe4" style="padding-bottom:8px;">
     <button class="copy-btn" onclick="copyBlock('recipe4')">복사</button>
     <span class="recipe-num">#4</span>
     <code>진료실 책상 위 서류와 펜</code>을 위에서 내려다본 플랫레이 사진, 따뜻한 톤
+    <br><button class="recipe-img-toggle" onclick="toggleRecipeImg(this)"><span class="arrow">&#x25bc;</span> 예시 보기</button>
+    <div class="recipe-img-wrap"><img src="images/recipe4.png" alt="플랫레이 예시" loading="lazy"></div>
   </div>
 </section>
 
@@ -728,6 +755,18 @@ function copyBlock(id) {
       btn.classList.remove('copied');
     }, 1800);
   });
+}
+
+function toggleRecipeImg(btn) {
+  btn.classList.toggle('active');
+  const wrap = btn.nextElementSibling;
+  if (wrap.style.maxHeight) {
+    wrap.style.maxHeight = null;
+    btn.innerHTML = '<span class="arrow">&#x25bc;</span> 예시 보기';
+  } else {
+    wrap.style.maxHeight = wrap.scrollHeight + 'px';
+    btn.innerHTML = '<span class="arrow">&#x25bc;</span> 접기';
+  }
 }
 
 function toggleCollapsible(btn) {

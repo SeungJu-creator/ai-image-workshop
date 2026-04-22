@@ -267,6 +267,41 @@
   }
   .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
+  /* COLLAPSIBLE */
+  .collapsible-toggle {
+    display: flex; align-items: center; justify-content: space-between;
+    width: 100%; background: var(--bg-card); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 16px 20px;
+    color: var(--text-primary); font-size: 0.95rem; font-weight: 600;
+    cursor: pointer; transition: all 0.2s;
+    font-family: inherit; text-align: left;
+  }
+  .collapsible-toggle:hover { border-color: var(--teal); }
+  .collapsible-toggle .arrow {
+    transition: transform 0.3s; font-size: 12px; color: var(--teal);
+  }
+  .collapsible-toggle.active { border-color: var(--teal); border-radius: var(--radius) var(--radius) 0 0; }
+  .collapsible-toggle.active .arrow { transform: rotate(180deg); }
+  .collapsible-content {
+    max-height: 0; overflow: hidden;
+    transition: max-height 0.4s ease;
+  }
+  .collapsible-content .prompt-block {
+    border-radius: 0 0 var(--radius) var(--radius);
+    border-top: none; margin-bottom: 0;
+  }
+
+  /* ROLE BLOCK */
+  .role-header {
+    color: var(--teal); font-weight: 700; font-size: 0.92rem;
+    margin-top: 16px; margin-bottom: 4px;
+  }
+  .role-header:first-child { margin-top: 0; }
+  .prompt-intro {
+    color: var(--text-secondary); font-size: 0.9rem;
+    line-height: 1.7; margin-bottom: 14px;
+  }
+
   /* RESPONSIVE */
   @media (max-width: 600px) {
     main { padding: 66px 14px 40px; }
@@ -286,6 +321,7 @@
     <a href="#prompt-team" class="nav-link">프롬프트 팀</a>
     <a href="#principles" class="nav-link">4대 원칙</a>
     <a href="#recipes" class="nav-link">레시피</a>
+    <a href="#system-prompt" class="nav-link">실습 프롬프트</a>
     <a href="#mission" class="nav-link">실습 미션</a>
     <a href="#share" class="nav-link">결과 공유</a>
     <a href="#resources" class="nav-link">추천 도구</a>
@@ -417,9 +453,86 @@
   </div>
 </section>
 
-<!-- SECTION 5: 실습 미션 -->
+<!-- SECTION 5: 실습 시스템 프롬프트 -->
+<section id="system-prompt">
+  <h2 class="section-title"><span class="section-number">5</span>실습 시스템 프롬프트</h2>
+  <p class="prompt-intro">
+    AI 이미지를 <strong style="color:var(--coral);">진짜 기사 사진</strong>처럼 바꾸는 편집 프롬프트 설계 GPT입니다.<br>
+    아래 프롬프트를 ChatGPT에 먼저 붙여넣고, AI 이미지를 업로드하세요.
+  </p>
+
+  <button class="collapsible-toggle" onclick="toggleCollapsible(this)">
+    <span>&#x1f4f7; 기사 사진 변환 시스템 프롬프트 (펼치기)</span>
+    <span class="arrow">&#x25bc;</span>
+  </button>
+  <div class="collapsible-content" id="system-prompt-content">
+    <div class="prompt-block" id="system-prompt-block">
+      <button class="copy-btn" onclick="copyBlock('system-prompt-block')">복사</button>
+너는 "AI 일러스트/콘셉트 이미지를 현실적인 기사 사진 스타일로 바꾸기 위한 편집 프롬프트 설계 GPT"다.
+
+목표:
+사용자가 업로드한 이미지에서 비현실적이거나 AI가 생성한 티가 나는 요소를 식별하고, 이를 현실적인 기사 사진 또는 보도사진 스타일로 바꾸기 위한 최적의 편집 프롬프트를 작성한다. 결과물은 홍보 일러스트가 아니라 실제 기자가 현장에서 촬영한 사진처럼 보여야 한다.
+
+핵심 역할:
+너는 아래 4개의 내부 역할을 순서대로 수행한다.
+
+[역할 1: 현실성 진단가]
+- 업로드된 이미지의 핵심 주제를 1문장으로 요약한다.
+- 비현실적 요소를 식별한다.
+- 기사 사진으로 전환할 때 반드시 제거해야 할 요소를 정리한다.
+- 원본 이미지에서 유지해야 할 핵심 맥락(주제, 인물 수, 회의/행사 성격, 장소성)을 정리한다.
+- 비현실적 요소를 어떤 현실적 요소로 대체할지 제안한다.
+
+[역할 2: 뉴스룸 포토에디터]
+- 이 장면이 어떤 기사 유형에 적합한지 판단한다.
+- 아래 4가지 중 가장 적합한 기사 톤을 선택한다.
+  1. 경제지 스타일
+  2. 산업/정책 기사 스타일
+  3. 국제협력 포럼 스타일
+  4. 일반 스트레이트 기사 스타일
+- 선택한 톤에 맞게 구도, 인물 연출, 소품, 조명, 배경을 결정한다.
+- 기사 사진은 상징보다 현장성을 우선한다.
+
+[역할 3: 편집 프롬프트 작성자]
+- 이미지 편집 모델에 바로 넣을 수 있는 최종 프롬프트를 작성한다.
+- 반드시 영어로 작성한 최종 편집 프롬프트를 제공한다.
+- 프롬프트에는 다음 요소가 포함되어야 한다.
+  1. keep the core topic 형태의 핵심 주제 유지 문장
+  2. 제거할 비현실 요소의 구체적 나열
+  3. 대체할 현실적 장면 설명
+  4. 보도사진 스타일 지시
+  5. 금지 요소 지시
+- 프롬프트는 구체적이고 시각적으로 명확해야 하며, "예쁘게", "세련되게", "프로페셔널하게" 같은 모호한 표현만으로 끝내면 안 된다.
+
+[역할 4: 최종 검수자]
+- 작성한 프롬프트가 다시 AI풍 이미지를 만들 위험이 있는지 점검한다.
+- 손, 표정, 자세, 배경, 조명, 소품, 질감이 현실적으로 생성되도록 보정한다.
+- 필요하면 더 현실적인 방향으로 프롬프트를 한 번 더 다듬는다.
+
+판단 기준:
+- 제거 대상: 공중에 떠 있는 아이콘, 글자, 그래프, 홀로그램, 네온 인터페이스, 미래형 장치, 비현실적인 로봇, 상징용 지구본, 과도한 광원 효과, 바닥 원형 그래픽, 인포그래픽식 구성, 만화풍/일러스트풍 질감, 지나치게 완벽한 대칭 구도
+- 현실 대체 요소: 회의실, 컨퍼런스룸, 포럼장, 기자 촬영 구도, 회의 테이블, 노트북, 인쇄자료, 명찰, 물컵, 커피잔, 펜, 노트, 자연스러운 손동작, 비대칭적 자세, 실내 자연광
+
+기사 사진의 핵심: 현장감, 자연스러움, 약간의 불완전성, 실제 인물 같은 피부결, 실제 행사 같은 소품 구성, 과장되지 않은 배경
+
+출력 형식:
+1. 이미지 진단 (핵심 주제 / 비현실적 요소 / 유지할 요소 / 현실적 대체 요소)
+2. 기사 사진화 전략 (기사 톤 / 구도 / 인물 연출 / 배경 / 소품 / 조명)
+3. 최종 영문 프롬프트 (코드블록)
+4. 네거티브 지시어 (쉼표 구분)
+5. 검수 포인트 (5가지)
+
+추가 규칙:
+- "짧게" → 항목별 축약
+- "바로 편집용만" → 3번, 4번만 출력
+- "기자 대상 강연용" → 설명을 교육용으로 쉽게
+- "영문만" → 영어로만 출력</div>
+  </div>
+</section>
+
+<!-- SECTION 6: 실습 미션 -->
 <section id="mission">
-  <h2 class="section-title"><span class="section-number">5</span>실습 미션</h2>
+  <h2 class="section-title"><span class="section-number">6</span>실습 미션</h2>
 
   <div class="mission-box">
     <span class="mission-label label-article">기사 리드</span>
@@ -438,9 +551,9 @@
   </div>
 </section>
 
-<!-- SECTION 6: 결과 공유 -->
+<!-- SECTION 7: 결과 공유 -->
 <section id="share">
-  <h2 class="section-title"><span class="section-number">6</span>결과 공유</h2>
+  <h2 class="section-title"><span class="section-number">7</span>결과 공유</h2>
   <p style="color:var(--text-secondary); margin-bottom:20px; font-size:0.92rem;">
     완성된 이미지를 아래 Padlet에 올려주세요!
   </p>
@@ -450,9 +563,9 @@
   </a>
 </section>
 
-<!-- SECTION 7: 추천 도구 & 참고 영상 -->
+<!-- SECTION 8: 추천 도구 & 참고 영상 -->
 <section id="resources">
-  <h2 class="section-title"><span class="section-number">7</span>추천 도구 &amp; 참고 영상</h2>
+  <h2 class="section-title"><span class="section-number">8</span>추천 도구 &amp; 참고 영상</h2>
 
   <h3 style="font-size:1rem; font-weight:600; margin-bottom:8px; color:var(--teal);">추천 도구</h3>
   <div style="margin-bottom:28px;">
@@ -551,6 +664,19 @@ function copyBlock(id) {
       btn.classList.remove('copied');
     }, 1800);
   });
+}
+
+function toggleCollapsible(btn) {
+  btn.classList.toggle('active');
+  const content = btn.nextElementSibling;
+  const label = btn.querySelector('span:first-child');
+  if (content.style.maxHeight) {
+    content.style.maxHeight = null;
+    label.innerHTML = '&#x1f4f7; 기사 사진 변환 시스템 프롬프트 (펼치기)';
+  } else {
+    content.style.maxHeight = content.scrollHeight + 'px';
+    label.innerHTML = '&#x1f4f7; 기사 사진 변환 시스템 프롬프트 (접기)';
+  }
 }
 
 function showToast() {

@@ -387,9 +387,12 @@
       <p style="color:var(--text-secondary); font-size:0.85rem; margin-bottom:12px;">
         NotebookLM에 아래 기사 URL을 소스로 추가 &rarr; 프롬프트 입력
       </p>
-      <a href="https://new.dailypharm.com/user/news/336899?REFERER=NP" target="_blank" rel="noopener" style="display:inline-flex; align-items:center; gap:8px; background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius-sm); padding:10px 16px; text-decoration:none; color:var(--text-primary); font-size:0.85rem; font-weight:500; margin-bottom:12px;">
-        <span>&#x1f517;</span> 데일리팜: "깎는 정책 많고 우대는 0"…제약 약가우대 촉구
-      </a>
+      <div style="display:flex; align-items:center; gap:8px; margin-bottom:12px; flex-wrap:wrap;">
+        <a href="https://new.dailypharm.com/user/news/336899?REFERER=NP" target="_blank" rel="noopener" style="display:inline-flex; align-items:center; gap:8px; background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius-sm); padding:10px 16px; text-decoration:none; color:var(--text-primary); font-size:0.85rem; font-weight:500;">
+          <span>&#x1f517;</span> 데일리팜: "깎는 정책 많고 우대는 0"…제약 약가우대 촉구
+        </a>
+        <button onclick="copyUrl(this, 'https://new.dailypharm.com/user/news/336899?REFERER=NP')" style="background:var(--teal); color:var(--bg-primary); border:none; border-radius:var(--radius-sm); padding:8px 14px; font-size:12px; font-weight:600; cursor:pointer; font-family:inherit; transition:all 0.2s;">URL 복사</button>
+      </div>
       <div class="prompt-block" id="wow-prompt2" style="text-align:left; margin-bottom:12px;">
         <button class="copy-btn" onclick="copyBlock('wow-prompt2')">복사</button>
 이 기사를 3~4장 슬라이드 덱으로 요약해줘. 각 슬라이드에 어울리는 이미지도 같이 만들어줘.</div>
@@ -758,6 +761,20 @@ function copyBlock(id) {
     setTimeout(() => {
       btn.textContent = '복사';
       btn.classList.remove('copied');
+    }, 1800);
+  });
+}
+
+function copyUrl(btn, url) {
+  navigator.clipboard.writeText(url).then(() => {
+    btn.textContent = '완료!';
+    btn.style.background = 'var(--coral)';
+    btn.style.color = '#fff';
+    showToast();
+    setTimeout(() => {
+      btn.textContent = 'URL 복사';
+      btn.style.background = 'var(--teal)';
+      btn.style.color = 'var(--bg-primary)';
     }, 1800);
   });
 }

@@ -361,42 +361,54 @@
 <section id="wow" style="margin-bottom:40px;">
   <div style="background:linear-gradient(135deg, rgba(78,205,196,0.12), rgba(255,107,107,0.08)); border:1px solid var(--teal); border-radius:var(--radius); padding:24px; text-align:center;">
     <div style="font-size:2rem; margin-bottom:8px;">&#x1f680;</div>
-    <div style="font-size:1.1rem; font-weight:700; margin-bottom:4px;">먼저 체험! NotebookLM</div>
-    <p style="color:var(--text-secondary); font-size:0.88rem; margin-bottom:14px;">
-      <a href="https://notebooklm.google.com" target="_blank" rel="noopener" style="color:var(--teal); text-decoration:underline;">notebooklm.google.com</a> 접속 &rarr; 아래 2개 소스 업로드 &rarr; 프롬프트 입력
-    </p>
-    <div style="display:flex; flex-wrap:wrap; gap:8px; margin-bottom:14px;">
-      <a href="diabetes_policy.pdf" download style="display:inline-flex; align-items:center; gap:8px; background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius-sm); padding:10px 16px; text-decoration:none; color:var(--text-primary); font-size:0.85rem; font-weight:500; transition:border-color 0.2s;">
-        <span>&#x1f4c4;</span> 소스1: 당뇨병용제 급여기준 고시 <span style="color:var(--teal);">&#x2913;</span>
-      </a>
-      <a href="diabetes_articles.pdf" download style="display:inline-flex; align-items:center; gap:8px; background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius-sm); padding:10px 16px; text-decoration:none; color:var(--text-primary); font-size:0.85rem; font-weight:500; transition:border-color 0.2s;">
-        <span>&#x1f4f0;</span> 소스2: 급여기준 확대 기사 2건 <span style="color:var(--teal);">&#x2913;</span>
+    <div style="font-size:1.1rem; font-weight:700; margin-bottom:12px;">먼저 체험! NotebookLM <span style="font-size:0.8rem; color:var(--text-muted); font-weight:400;">(5분)</span></div>
+
+    <!-- STEP 1 -->
+    <div style="text-align:left; background:var(--bg-secondary); border-radius:var(--radius-sm); padding:16px; margin-bottom:16px;">
+      <div style="display:flex; align-items:center; gap:8px; margin-bottom:10px;">
+        <span style="display:inline-flex; align-items:center; justify-content:center; width:26px; height:26px; border-radius:50%; background:var(--teal); color:var(--bg-primary); font-size:13px; font-weight:700; flex-shrink:0;">1</span>
+        <span style="font-weight:600; font-size:0.92rem;"><a href="https://notebooklm.google.com" target="_blank" rel="noopener" style="color:var(--teal); text-decoration:underline;">notebooklm.google.com</a> 접속 &rarr; PDF 업로드</span>
+      </div>
+      <a href="diabetes_policy.pdf" download style="display:inline-flex; align-items:center; gap:8px; background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius-sm); padding:8px 14px; text-decoration:none; color:var(--text-primary); font-size:0.83rem; font-weight:500;">
+        <span>&#x1f4c4;</span> 당뇨병용제 급여기준 고시 PDF <span style="color:var(--teal);">&#x2913;</span>
       </a>
     </div>
-    <p style="display:none;"
-    </p>
-    <div class="prompt-block" id="wow-prompt" style="text-align:left; margin-bottom:12px;">
-      <button class="copy-btn" onclick="copyBlock('wow-prompt')">복사</button>
-이 두 자료를 합쳐서 5장 이내의 슬라이드 덱으로 요약해줘. 각 슬라이드에 어울리는 이미지도 같이 만들어줘.</div>
-    <a href="https://padlet.com/sjhann96/padlet-cls337hswbz5wxtl" target="_blank" rel="noopener" style="display:inline-flex; align-items:center; gap:8px; background:var(--coral); color:#fff; padding:10px 20px; border-radius:var(--radius-sm); text-decoration:none; font-size:0.9rem; font-weight:600; transition:opacity 0.2s;">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px;"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
-      완성되면 Padlet에 올리기
-    </a>
 
-    <div style="border-top:1px solid rgba(78,205,196,0.3); margin-top:20px; padding-top:18px;">
-      <div style="font-size:0.95rem; font-weight:700; margin-bottom:4px;">&#x1f4a1; 체험 2: 기사 URL로 슬라이드 만들기</div>
-      <p style="color:var(--text-secondary); font-size:0.85rem; margin-bottom:12px;">
-        NotebookLM에 아래 기사 URL을 소스로 추가 &rarr; 프롬프트 입력
-      </p>
-      <div style="display:flex; align-items:center; gap:8px; margin-bottom:12px; flex-wrap:wrap;">
-        <a href="https://new.dailypharm.com/user/news/336899?REFERER=NP" target="_blank" rel="noopener" style="display:inline-flex; align-items:center; gap:8px; background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius-sm); padding:10px 16px; text-decoration:none; color:var(--text-primary); font-size:0.85rem; font-weight:500;">
-          <span>&#x1f517;</span> 데일리팜: "깎는 정책 많고 우대는 0"…제약 약가우대 촉구
-        </a>
-        <button onclick="copyUrl(this, 'https://new.dailypharm.com/user/news/336899?REFERER=NP')" style="background:var(--teal); color:var(--bg-primary); border:none; border-radius:var(--radius-sm); padding:8px 14px; font-size:12px; font-weight:600; cursor:pointer; font-family:inherit; transition:all 0.2s;">URL 복사</button>
+    <!-- STEP 2 -->
+    <div style="text-align:left; background:var(--bg-secondary); border-radius:var(--radius-sm); padding:16px; margin-bottom:16px;">
+      <div style="display:flex; align-items:center; gap:8px; margin-bottom:10px;">
+        <span style="display:inline-flex; align-items:center; justify-content:center; width:26px; height:26px; border-radius:50%; background:var(--teal); color:var(--bg-primary); font-size:13px; font-weight:700; flex-shrink:0;">2</span>
+        <span style="font-weight:600; font-size:0.92rem;">프롬프트 복사 &rarr; 붙여넣기</span>
       </div>
-      <div class="prompt-block" id="wow-prompt2" style="text-align:left; margin-bottom:12px;">
+      <div class="prompt-block" id="wow-prompt" style="text-align:left; margin-bottom:0;">
+        <button class="copy-btn" onclick="copyBlock('wow-prompt')">복사</button>
+이 자료를 5장 이내의 슬라이드 덱으로 요약해줘. 각 슬라이드에 어울리는 이미지도 같이 만들어줘.</div>
+    </div>
+
+    <!-- STEP 3 (기다리면서) -->
+    <div style="text-align:left; background:var(--bg-secondary); border-radius:var(--radius-sm); padding:16px; margin-bottom:16px;">
+      <div style="display:flex; align-items:center; gap:8px; margin-bottom:10px;">
+        <span style="display:inline-flex; align-items:center; justify-content:center; width:26px; height:26px; border-radius:50%; background:var(--coral); color:#fff; font-size:13px; font-weight:700; flex-shrink:0;">3</span>
+        <span style="font-weight:600; font-size:0.92rem;">기다리는 동안! 기사 URL로 한 번 더</span>
+      </div>
+      <p style="color:var(--text-secondary); font-size:0.83rem; margin-bottom:10px;">NotebookLM에 아래 기사 URL을 소스로 추가 &rarr; 프롬프트 입력</p>
+      <div style="display:flex; align-items:center; gap:8px; margin-bottom:10px; flex-wrap:wrap;">
+        <a href="https://new.dailypharm.com/user/news/336899?REFERER=NP" target="_blank" rel="noopener" style="display:inline-flex; align-items:center; gap:8px; background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius-sm); padding:8px 14px; text-decoration:none; color:var(--text-primary); font-size:0.83rem; font-weight:500;">
+          <span>&#x1f517;</span> "깎는 정책 많고 우대는 0"…제약 약가우대 촉구
+        </a>
+        <button onclick="copyUrl(this, 'https://new.dailypharm.com/user/news/336899?REFERER=NP')" style="background:var(--teal); color:var(--bg-primary); border:none; border-radius:var(--radius-sm); padding:6px 12px; font-size:11px; font-weight:600; cursor:pointer; font-family:inherit; transition:all 0.2s;">URL 복사</button>
+      </div>
+      <div class="prompt-block" id="wow-prompt2" style="text-align:left; margin-bottom:0;">
         <button class="copy-btn" onclick="copyBlock('wow-prompt2')">복사</button>
 이 기사를 3~4장 슬라이드 덱으로 요약해줘. 각 슬라이드에 어울리는 이미지도 같이 만들어줘.</div>
+    </div>
+
+    <!-- STEP 4 -->
+    <div style="text-align:center;">
+      <div style="display:flex; align-items:center; justify-content:center; gap:8px; margin-bottom:12px;">
+        <span style="display:inline-flex; align-items:center; justify-content:center; width:26px; height:26px; border-radius:50%; background:var(--teal); color:var(--bg-primary); font-size:13px; font-weight:700; flex-shrink:0;">4</span>
+        <span style="font-weight:600; font-size:0.92rem;">결과 확인 &rarr; Padlet에 공유!</span>
+      </div>
       <a href="https://padlet.com/sjhann96/padlet-cls337hswbz5wxtl" target="_blank" rel="noopener" style="display:inline-flex; align-items:center; gap:8px; background:var(--coral); color:#fff; padding:10px 20px; border-radius:var(--radius-sm); text-decoration:none; font-size:0.9rem; font-weight:600; transition:opacity 0.2s;">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px;"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
         완성되면 Padlet에 올리기
